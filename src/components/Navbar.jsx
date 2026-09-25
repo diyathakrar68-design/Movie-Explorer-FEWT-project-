@@ -11,7 +11,7 @@ export default function Navbar() {
     e.preventDefault();
     updateApiKey(keyInput.trim());
     setShowModal(false);
-    window.location.reload(); // Refresh to fetch fresh TMDB data
+    window.location.reload();
   };
 
   return (
@@ -30,10 +30,10 @@ export default function Navbar() {
               <button
                 className={`btn btn-sm ${apiKey ? "btn-outline-success" : "btn-outline-warning"} rounded-pill text-nowrap`}
                 onClick={() => setShowModal(true)}
-                title="Configure TMDB API Key"
+                title="TMDB API Key Settings"
                 style={{ fontSize: "0.78rem" }}
               >
-                {apiKey ? "⚡ TMDB Active" : "⚙ TMDB Key"}
+                {apiKey ? "TMDB Active" : "API Key"}
               </button>
             </div>
 
@@ -57,7 +57,7 @@ export default function Navbar() {
                 <NavLink className="nav-link" to="/watchlist">
                   Watchlist{" "}
                   {watchlist.length > 0 && (
-                    <span className="badge bg-danger ms-1">
+                    <span className="badge bg-success ms-1">
                       {watchlist.length}
                     </span>
                   )}
@@ -91,7 +91,6 @@ export default function Navbar() {
         </nav>
       </header>
 
-      {/* TMDB API Key Modal */}
       {showModal && (
         <div
           className="modal fade show d-block"
@@ -101,7 +100,7 @@ export default function Navbar() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content bg-dark text-white border-secondary">
               <div className="modal-header border-secondary">
-                <h5 className="modal-title">🎬 TMDB API Settings</h5>
+                <h5 className="modal-title">TMDB API Key</h5>
                 <button
                   type="button"
                   className="btn-close btn-close-white"
@@ -111,26 +110,22 @@ export default function Navbar() {
               <form onSubmit={handleSaveKey}>
                 <div className="modal-body">
                   <p className="text-secondary small">
-                    Enter your{" "}
-                    <strong>The Movie Database (TMDB) API Key</strong> to fetch
-                    live trending, top rated, and popular movies with real cover
-                    posters!
+                    Enter your TMDB API Key to fetch live trending, top rated, and popular movies.
                   </p>
                   <div className="mb-3">
                     <label className="form-label small text-uppercase text-white-50">
-                      TMDB API Key (v3 auth)
+                      API Key
                     </label>
                     <input
                       type="text"
                       className="form-control bg-secondary bg-opacity-25 text-white border-secondary"
-                      placeholder="e.g. 8a3f..."
+                      placeholder="Enter API key"
                       value={keyInput}
                       onChange={(e) => setKeyInput(e.target.value)}
                     />
                   </div>
                   <div className="alert alert-info py-2 small mb-0">
-                    💡 If left empty or no key is provided, the app will
-                    gracefully fall back to the built-in local collection!
+                    If left empty, local fallback movies will be used.
                   </div>
                 </div>
                 <div className="modal-footer border-secondary">
@@ -156,7 +151,7 @@ export default function Navbar() {
                     Close
                   </button>
                   <button type="submit" className="btn btn-gradient btn-sm">
-                    Save Key & Refresh
+                    Save Key
                   </button>
                 </div>
               </form>

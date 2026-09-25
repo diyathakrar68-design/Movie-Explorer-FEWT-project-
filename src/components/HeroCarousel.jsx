@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 
@@ -15,7 +15,6 @@ export default function HeroCarousel({
 
   const featuredMovies = movies.slice(0, 5);
 
-  // Auto-play timer
   useEffect(() => {
     if (!featuredMovies.length || isHovered) return;
     const interval = setInterval(() => {
@@ -44,22 +43,12 @@ export default function HeroCarousel({
     setCurrentIndex((prev) => (prev + 1) % featuredMovies.length);
   };
 
-  // Determine background style (backdrop image or dark theme gradient fallback)
-  const bgStyle = currentMovie.backdrop
-    ? {
-        backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.95) 20%, rgba(15, 23, 42, 0.6) 60%, rgba(15, 23, 42, 0.85) 100%), url(${currentMovie.backdrop})`,
-      }
-    : {
-        backgroundImage: `linear-gradient(135deg, #${currentMovie.color || "1e293b"} 0%, #0f172a 100%)`,
-      };
-
   return (
     <section
       className="hero-carousel-section position-relative overflow-hidden mb-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Dynamic Background Slides with smooth fade transitions */}
       <div className="hero-carousel-bg-wrapper">
         {featuredMovies.map((movie, idx) => {
           const active = idx === currentIndex;
@@ -84,10 +73,9 @@ export default function HeroCarousel({
       <div className="container position-relative py-5 z-2">
         <div className="row align-items-center min-vh-50 py-4">
           <div className="col-lg-7 text-white">
-            {/* Tag / Eyebrow */}
             <div className="d-flex align-items-center gap-2 mb-3">
               <span className="badge bg-gradient-primary text-uppercase px-3 py-2 fw-semibold">
-                🔥 Featured Release
+                Featured Movie
               </span>
               <span className="text-warning fw-bold">
                 ★ {currentMovie.rating} / 10
@@ -100,12 +88,10 @@ export default function HeroCarousel({
               </span>
             </div>
 
-            {/* Movie Title */}
             <h1 className="display-4 fw-extrabold hero-slide-title mb-3">
               {currentMovie.title}
             </h1>
 
-            {/* Movie Description */}
             <p
               className="lead text-white-50 mb-4 line-clamp-3 hero-slide-desc"
               style={{ maxWidth: "650px" }}
@@ -113,13 +99,12 @@ export default function HeroCarousel({
               {currentMovie.desc}
             </p>
 
-            {/* Action Buttons */}
             <div className="d-flex flex-wrap gap-3 mb-4">
               <button
                 onClick={() => navigate(`/movie/${currentMovie.id}`)}
                 className="btn btn-primary btn-lg px-4 rounded-pill shadow d-flex align-items-center gap-2 fw-semibold"
               >
-                <span>▶ View Details</span>
+                <span>View Details</span>
               </button>
 
               <button
@@ -129,12 +114,11 @@ export default function HeroCarousel({
                 }`}
               >
                 <span>
-                  {inWatchlist ? "✓ Saved to Watchlist" : "+ Add to Watchlist"}
+                  {inWatchlist ? "Saved to Watchlist" : "+ Add to Watchlist"}
                 </span>
               </button>
             </div>
 
-            {/* Search Input Box integrated in Carousel */}
             <form onSubmit={onSearchSubmit} className="mt-4 me-lg-4">
               <div className="input-group input-group-lg shadow-lg rounded-pill overflow-hidden bg-dark border border-secondary">
                 <span className="input-group-text bg-transparent border-0 text-white-50 ps-3">
@@ -145,7 +129,7 @@ export default function HeroCarousel({
                   className="form-control bg-transparent border-0 text-white shadow-none"
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder="Search over thousands of movies..."
+                  placeholder="Search movies..."
                 />
                 <button className="btn btn-gradient px-4 rounded-pill my-1 me-1 fw-bold">
                   Search
@@ -154,7 +138,6 @@ export default function HeroCarousel({
             </form>
           </div>
 
-          {/* Featured Movie Poster Card Preview */}
           <div className="col-lg-5 d-none d-lg-flex justify-content-center">
             <div
               className="hero-poster-card shadow-2xl rounded-4 overflow-hidden position-relative cursor-pointer"
@@ -179,7 +162,7 @@ export default function HeroCarousel({
                     {currentMovie.title}
                   </h5>
                   <div className="text-white-50 small">
-                    Click to explore details & reviews
+                    Click to view details
                   </div>
                 </div>
               </div>
@@ -187,9 +170,7 @@ export default function HeroCarousel({
           </div>
         </div>
 
-        {/* Carousel Navigation Controls (Arrows & Indicators) */}
         <div className="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-25">
-          {/* Indicators / Dots */}
           <div className="d-flex align-items-center gap-2">
             {featuredMovies.map((m, idx) => (
               <button
@@ -203,7 +184,6 @@ export default function HeroCarousel({
             ))}
           </div>
 
-          {/* Navigation Arrows */}
           <div className="d-flex gap-2">
             <button
               onClick={prevSlide}

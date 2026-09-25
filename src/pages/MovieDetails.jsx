@@ -101,6 +101,9 @@ export default function MovieDetails() {
               >
                 {saved ? "♥ Remove from Watchlist" : "♡ Add to Watchlist"}
               </button>
+              <Link className="btn btn-outline-light" to="/">
+                🏠 Home
+              </Link>
               <Link className="btn btn-outline-light" to="/movies">
                 ← All Movies
               </Link>

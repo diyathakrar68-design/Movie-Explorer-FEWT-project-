@@ -70,17 +70,18 @@ export default function Movies() {
                       </option>
                     ))
                   : [
-                      "Action",
-                      "Adventure",
-                      "Drama",
-                      "Sci-Fi",
-                      "Fantasy",
-                      "Crime",
-                      "Thriller",
-                      "Sport",
+                      { id: "hindi", name: "🇮🇳 Hindi Movies" },
+                      { id: "Action", name: "Action" },
+                      { id: "Adventure", name: "Adventure" },
+                      { id: "Drama", name: "Drama" },
+                      { id: "Sci-Fi", name: "Sci-Fi" },
+                      { id: "Fantasy", name: "Fantasy" },
+                      { id: "Crime", name: "Crime" },
+                      { id: "Thriller", name: "Thriller" },
+                      { id: "Sport", name: "Sport" },
                     ].map((item) => (
-                      <option key={item} value={item}>
-                        {item}
+                      <option key={item.id} value={item.id}>
+                        {item.name}
                       </option>
                     ))}
               </select>

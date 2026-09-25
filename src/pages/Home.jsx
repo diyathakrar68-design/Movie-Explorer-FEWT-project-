@@ -6,6 +6,7 @@ import {
   getTrendingMovies,
   getTopRatedMovies,
   getPopularMovies,
+  getHindiMovies,
 } from "../services/tmdb";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
   const [latestMovies, setLatestMovies] = useState([]);
   const [topMovies, setTopMovies] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
+  const [hindiMovies, setHindiMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
 
@@ -20,16 +22,18 @@ export default function Home() {
     let isMounted = true;
     async function loadAllMovies() {
       setLoading(true);
-      const [latest, top, popular] = await Promise.all([
+      const [latest, top, popular, hindi] = await Promise.all([
         getTrendingMovies(),
         getTopRatedMovies(),
         getPopularMovies(),
+        getHindiMovies(),
       ]);
 
       if (isMounted) {
         setLatestMovies(latest);
         setTopMovies(top);
         setPopularMovies(popular);
+        setHindiMovies(hindi);
         setLoading(false);
       }
     }
@@ -65,18 +69,27 @@ export default function Home() {
       ) : (
         <>
           <MovieRow
+            title="Popular Hindi & Bollywood Movies"
+            eyebrow="INDIAN CINEMA"
+            icon="🇮🇳"
+            movies={hindiMovies}
+          />
+          <MovieRow
             title="Latest & Trending Movies"
             eyebrow="FRESH RELEASES"
+            icon="🔥"
             movies={latestMovies}
           />
           <MovieRow
             title="Top Rated Movies"
             eyebrow="CRITICS & AUDIENCES"
+            icon="⭐"
             movies={topMovies}
           />
           <MovieRow
             title="Popular Movies"
             eyebrow="FAN FAVORITES"
+            icon="🍿"
             movies={popularMovies}
           />
         </>

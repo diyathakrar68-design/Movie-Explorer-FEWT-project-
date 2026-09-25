@@ -3,7 +3,6 @@ import { movies as staticMovies } from "../data/movies";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
 
-// Helper to get active API key from env or localStorage
 export const getApiKey = () => {
   return (
     import.meta.env.VITE_TMDB_API_KEY ||
@@ -24,7 +23,8 @@ let genreMapCache = null;
 
 export const fetchGenres = async () => {
   const apiKey = getApiKey();
-  if (!apiKey) return [];
+  const hindiGenreOption = { id: "hindi", name: "🇮🇳 Hindi Movies" };
+  if (!apiKey) return [hindiGenreOption];
   if (genreMapCache) return genreMapCache;
 
   try {
@@ -33,18 +33,17 @@ export const fetchGenres = async () => {
     );
     if (!res.ok) throw new Error("Failed to fetch genres");
     const data = await res.json();
-    genreMapCache = data.genres || [];
+    genreMapCache = [hindiGenreOption, ...(data.genres || [])];
     return genreMapCache;
   } catch (e) {
-    console.warn("TMDB fetchGenres fallback:", e);
-    return [];
+    console.warn("fetchGenres fallback:", e);
+    return [hindiGenreOption];
   }
 };
 
 export const formatMovie = (tmdbMovie, genresList = []) => {
   if (!tmdbMovie) return null;
 
-  // Genre resolution
   let genreNames = "";
   if (tmdbMovie.genres && Array.isArray(tmdbMovie.genres)) {
     genreNames = tmdbMovie.genres.map((g) => g.name).join(" / ");
@@ -88,7 +87,7 @@ export const formatMovie = (tmdbMovie, genresList = []) => {
     title: tmdbMovie.title || tmdbMovie.original_title,
     year: year,
     rating: rating,
-    genre: genreNames || "Movie",
+    genre: genreNames || (tmdbMovie.original_language === 'hi' ? 'Hindi Movie' : 'Movie'),
     duration: duration,
     category: tmdbMovie.category || "popular",
     desc: tmdbMovie.overview || "No description available.",
@@ -114,7 +113,7 @@ export const getTrendingMovies = async () => {
     const data = await res.json();
     return data.results.map((m) => formatMovie(m, genres));
   } catch (err) {
-    console.warn("TMDB API Error, using static movies fallback:", err);
+    console.warn("TMDB error, using fallback movies:", err);
     return staticMovies.filter((m) => m.category === "latest");
   }
 };
@@ -134,7 +133,7 @@ export const getTopRatedMovies = async () => {
     const data = await res.json();
     return data.results.map((m) => formatMovie(m, genres));
   } catch (err) {
-    console.warn("TMDB API Error, using static movies fallback:", err);
+    console.warn("TMDB error, using fallback movies:", err);
     return staticMovies.filter((m) => m.category === "top");
   }
 };
@@ -154,8 +153,28 @@ export const getPopularMovies = async () => {
     const data = await res.json();
     return data.results.map((m) => formatMovie(m, genres));
   } catch (err) {
-    console.warn("TMDB API Error, using static movies fallback:", err);
+    console.warn("TMDB error, using fallback movies:", err);
     return staticMovies.filter((m) => m.category === "popular");
+  }
+};
+
+export const getHindiMovies = async () => {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return staticMovies.filter((m) => m.category === "hindi");
+  }
+
+  try {
+    const genres = await fetchGenres();
+    const res = await fetch(
+      `${BASE_URL}/discover/movie?api_key=${apiKey}&with_original_language=hi&sort_by=popularity.desc&page=1`,
+    );
+    if (!res.ok) throw new Error("Failed to fetch Hindi movies");
+    const data = await res.json();
+    return data.results.map((m) => formatMovie(m, genres));
+  } catch (err) {
+    console.warn("TMDB error, using fallback Hindi movies:", err);
+    return staticMovies.filter((m) => m.category === "hindi");
   }
 };
 
@@ -165,6 +184,8 @@ export const searchOrDiscoverMovies = async ({
   sortBy = "",
 } = {}) => {
   const apiKey = getApiKey();
+  const isHindiGenre = genreId === "hindi" || genreId === "hi";
+
   if (!apiKey) {
     let list = staticMovies.filter((m) => {
       const matchQ =
@@ -172,7 +193,10 @@ export const searchOrDiscoverMovies = async ({
         m.title.toLowerCase().includes(query.toLowerCase()) ||
         m.genre.toLowerCase().includes(query.toLowerCase());
       const matchG =
-        !genreId || m.genre.toLowerCase().includes(genreId.toLowerCase());
+        !genreId ||
+        (isHindiGenre
+          ? m.category === "hindi" || m.genre.toLowerCase().includes("hindi")
+          : m.genre.toLowerCase().includes(String(genreId).toLowerCase()));
       return matchQ && matchG;
     });
     if (sortBy === "rating")
@@ -193,6 +217,14 @@ export const searchOrDiscoverMovies = async ({
 
     if (query.trim()) {
       url = `${BASE_URL}/search/movie?api_key=${apiKey}&language=en-US&query=${encodeURIComponent(query.trim())}`;
+    } else if (isHindiGenre) {
+      url = `${BASE_URL}/discover/movie?api_key=${apiKey}&with_original_language=hi&sort_by=${
+        sortBy === "rating"
+          ? "vote_average.desc"
+          : sortBy === "year"
+            ? "primary_release_date.desc"
+            : "popularity.desc"
+      }`;
     } else if (genreId) {
       url += `&with_genres=${genreId}`;
     }
@@ -202,8 +234,10 @@ export const searchOrDiscoverMovies = async ({
     const data = await res.json();
     return data.results.map((m) => formatMovie(m, genres));
   } catch (err) {
-    console.warn("TMDB API Error, returning static filter fallback:", err);
-    return staticMovies;
+    console.warn("TMDB error, using fallback movies:", err);
+    return isHindiGenre
+      ? staticMovies.filter((m) => m.category === "hindi")
+      : staticMovies;
   }
 };
 
@@ -211,7 +245,6 @@ export const getMovieDetails = async (id) => {
   const apiKey = getApiKey();
   const numericId = Number(id);
 
-  // Default fallback cast for static movies
   const fallbackCast = [
     {
       id: 101,
@@ -241,16 +274,8 @@ export const getMovieDetails = async (id) => {
       profilePath:
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
     },
-    {
-      id: 105,
-      name: "Special Guest",
-      character: "Mentor",
-      profilePath:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80",
-    },
   ];
 
-  // Check static fallback first if not numeric or no API key
   const staticFound = staticMovies.find((m) => m.id === numericId);
 
   if (!apiKey) {
@@ -279,7 +304,6 @@ export const getMovieDetails = async (id) => {
     const data = await res.json();
     const formatted = formatMovie(data);
 
-    // Fetch recommendations / similar movies
     const simRes = await fetch(
       `${BASE_URL}/movie/${id}/recommendations?api_key=${apiKey}&language=en-US`,
     );
@@ -289,7 +313,6 @@ export const getMovieDetails = async (id) => {
       similarList = simData.results.slice(0, 5).map((m) => formatMovie(m));
     }
 
-    // Fetch Cast & Crew Credits
     let castList = [];
     try {
       const creditsRes = await fetch(
@@ -307,7 +330,7 @@ export const getMovieDetails = async (id) => {
         }));
       }
     } catch (e) {
-      console.warn("Failed to fetch cast credits:", e);
+      console.warn("Failed to fetch credits:", e);
     }
 
     if (!castList.length) {
@@ -320,7 +343,7 @@ export const getMovieDetails = async (id) => {
       similar: similarList,
     };
   } catch (err) {
-    console.warn("TMDB API getMovieDetails error, using static fallback:", err);
+    console.warn("getMovieDetails error, using static fallback:", err);
     return {
       movie: { ...(staticFound || staticMovies[0]), cast: fallbackCast },
       cast: fallbackCast,
