@@ -1,1 +1,63 @@
-import{useState}from'react';import{Link,useNavigate}from'react-router-dom';import{useApp}from'../context/AppContext';export default function Login(){const nav=useNavigate();const{login}=useApp();const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[error,setError]=useState('');const submit=e=>{e.preventDefault();const raw=localStorage.getItem('movieExplorerUser');if(!raw)return setError('No account found. Please Sign Up first.');const u=JSON.parse(raw);if(email.trim()!==u.email||password!==u.password)return setError('Invalid email or password.');login(u);nav('/')};return <section className="signup-section"><div className="container"><div className="row justify-content-center"><div className="col-md-8 col-lg-5"><div className="signup-card"><div className="text-center mb-4"><div className="signup-icon">🔐</div><h1>Welcome Back</h1><p>Login to continue exploring movies.</p></div><form onSubmit={submit}><label className="form-label">Email Address</label><input type="email" className="form-control mb-3" value={email} onChange={e=>setEmail(e.target.value)} required/><label className="form-label">Password</label><input type="password" className="form-control mb-4" value={password} onChange={e=>setPassword(e.target.value)} required/>{error&&<div className="alert alert-danger">{error}</div>}<button className="btn btn-gradient w-100">Login</button><p className="text-center mt-4">Don't have an account? <Link to="/signup" className="signup-link">Create Account</Link></p></form></div></div></div></div></section>}
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useApp } from "../context/AppContext";
+export default function Login() {
+  const nav = useNavigate();
+  const { login } = useApp();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const submit = (e) => {
+    e.preventDefault();
+    const raw = localStorage.getItem("movieExplorerUser");
+    if (!raw) return setError("No account found. Please Sign Up first.");
+    const u = JSON.parse(raw);
+    if (email.trim() !== u.email || password !== u.password)
+      return setError("Invalid email or password.");
+    login(u);
+    nav("/");
+  };
+  return (
+    <section className="signup-section">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-8 col-lg-5">
+            <div className="signup-card">
+              <div className="text-center mb-4">
+                <div className="signup-icon">🔐</div>
+                <h1>Welcome Back</h1>
+                <p>Login to continue exploring movies.</p>
+              </div>
+              <form onSubmit={submit}>
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className="form-control mb-3"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  className="form-control mb-4"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                {error && <div className="alert alert-danger">{error}</div>}
+                <button className="btn btn-gradient w-100">Login</button>
+                <p className="text-center mt-4">
+                  Don't have an account?{" "}
+                  <Link to="/signup" className="signup-link">
+                    Create Account
+                  </Link>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

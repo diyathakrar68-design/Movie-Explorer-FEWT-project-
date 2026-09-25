@@ -1,16 +1,27 @@
-import { movies as staticMovies } from '../data/movies';
-import { useApp } from '../context/AppContext';
-import MovieCard from '../components/MovieCard';
+import { movies as staticMovies } from "../data/movies";
+import { useApp } from "../context/AppContext";
+import MovieCard from "../components/MovieCard";
 
 export default function Watchlist() {
   const { watchlist } = useApp();
 
   const savedList = watchlist
     .map((item) => {
-      if (typeof item === 'object' && item !== null) {
-        return item;
+      const itemId = typeof item === "object" && item !== null ? item.id : Number(item);
+      const staticFound = staticMovies.find((m) => m.id === itemId);
+
+      if (typeof item === "object" && item !== null) {
+        // Merge stored watchlist item with fresh static data if poster is missing or old SVG
+        const hasValidPoster = item.poster && !item.poster.includes(".svg");
+        return {
+          ...staticFound,
+          ...item,
+          poster: hasValidPoster ? item.poster : (staticFound?.poster || item.poster),
+          backdrop: item.backdrop || staticFound?.backdrop,
+        };
       }
-      return staticMovies.find((m) => m.id === Number(item));
+
+      return staticFound;
     })
     .filter(Boolean);
 
@@ -35,7 +46,9 @@ export default function Watchlist() {
           ) : (
             <div className="empty">
               <h4>Your watchlist is empty</h4>
-              <p>Add movies from Home or All Movies to build your collection.</p>
+              <p>
+                Add movies from Home or All Movies to build your collection.
+              </p>
             </div>
           )}
         </div>

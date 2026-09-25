@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { useApp } from "../context/AppContext";
 
 export default function Navbar() {
   const { watchlist, loggedIn, user, logout, apiKey, updateApiKey } = useApp();
   const [showModal, setShowModal] = useState(false);
-  const [keyInput, setKeyInput] = useState(apiKey || '');
+  const [keyInput, setKeyInput] = useState(apiKey || "");
 
   const handleSaveKey = (e) => {
     e.preventDefault();
@@ -19,18 +19,21 @@ export default function Navbar() {
       <header className="site-header">
         <nav className="navbar navbar-expand-lg">
           <div className="container py-2">
-            <Link className="navbar-brand brand text-white d-flex align-items-center gap-2" to="/">
-              <span className="brand-icon">▶</span> Movie Explorer
+            <Link
+              className="navbar-brand brand text-white d-flex align-items-center gap-2"
+              to="/"
+            >
+              <span className="brand-icon">🍃</span> MovieMint
             </Link>
 
             <div className="d-flex align-items-center gap-2 me-2">
               <button
-                className={`btn btn-sm ${apiKey ? 'btn-outline-success' : 'btn-outline-warning'} rounded-pill text-nowrap`}
+                className={`btn btn-sm ${apiKey ? "btn-outline-success" : "btn-outline-warning"} rounded-pill text-nowrap`}
                 onClick={() => setShowModal(true)}
                 title="Configure TMDB API Key"
-                style={{ fontSize: '0.78rem' }}
+                style={{ fontSize: "0.78rem" }}
               >
-                {apiKey ? '⚡ TMDB Active' : '⚙ TMDB Key'}
+                {apiKey ? "⚡ TMDB Active" : "⚙ TMDB Key"}
               </button>
             </div>
 
@@ -52,16 +55,23 @@ export default function Navbar() {
                   All Movies
                 </NavLink>
                 <NavLink className="nav-link" to="/watchlist">
-                  Watchlist{' '}
+                  Watchlist{" "}
                   {watchlist.length > 0 && (
-                    <span className="badge bg-danger ms-1">{watchlist.length}</span>
+                    <span className="badge bg-danger ms-1">
+                      {watchlist.length}
+                    </span>
                   )}
                 </NavLink>
 
                 {loggedIn ? (
                   <>
-                    <span className="nav-link text-light">Hi, {user?.name || 'User'}</span>
-                    <button className="btn btn-sm btn-outline-light ms-lg-2" onClick={logout}>
+                    <span className="nav-link text-light">
+                      Hi, {user?.name || "User"}
+                    </span>
+                    <button
+                      className="btn btn-sm btn-outline-light ms-lg-2"
+                      onClick={logout}
+                    >
                       Logout
                     </button>
                   </>
@@ -86,7 +96,7 @@ export default function Navbar() {
         <div
           className="modal fade show d-block"
           tabIndex="-1"
-          style={{ backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 1060 }}
+          style={{ backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1060 }}
         >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content bg-dark text-white border-secondary">
@@ -101,7 +111,10 @@ export default function Navbar() {
               <form onSubmit={handleSaveKey}>
                 <div className="modal-body">
                   <p className="text-secondary small">
-                    Enter your <strong>The Movie Database (TMDB) API Key</strong> to fetch live trending, top rated, and popular movies with real cover posters!
+                    Enter your{" "}
+                    <strong>The Movie Database (TMDB) API Key</strong> to fetch
+                    live trending, top rated, and popular movies with real cover
+                    posters!
                   </p>
                   <div className="mb-3">
                     <label className="form-label small text-uppercase text-white-50">
@@ -116,7 +129,8 @@ export default function Navbar() {
                     />
                   </div>
                   <div className="alert alert-info py-2 small mb-0">
-                    💡 If left empty or no key is provided, the app will gracefully fall back to the built-in local collection!
+                    💡 If left empty or no key is provided, the app will
+                    gracefully fall back to the built-in local collection!
                   </div>
                 </div>
                 <div className="modal-footer border-secondary">
@@ -125,8 +139,8 @@ export default function Navbar() {
                       type="button"
                       className="btn btn-outline-danger btn-sm me-auto"
                       onClick={() => {
-                        setKeyInput('');
-                        updateApiKey('');
+                        setKeyInput("");
+                        updateApiKey("");
                         setShowModal(false);
                         window.location.reload();
                       }}

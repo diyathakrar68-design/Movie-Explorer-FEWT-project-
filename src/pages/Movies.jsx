@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import MovieCard from '../components/MovieCard';
-import { searchOrDiscoverMovies, fetchGenres } from '../services/tmdb';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import MovieCard from "../components/MovieCard";
+import { searchOrDiscoverMovies, fetchGenres } from "../services/tmdb";
 
 export default function Movies() {
   const [p] = useSearchParams();
-  const [q, setQ] = useState(p.get('q') || '');
-  const [g, setG] = useState('');
-  const [s, setS] = useState('');
+  const [q, setQ] = useState(p.get("q") || "");
+  const [g, setG] = useState("");
+  const [s, setS] = useState("");
   const [movieList, setMovieList] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,9 @@ export default function Movies() {
         <div className="container">
           <div className="text-white-50 small fw-bold">MOVIE LIBRARY</div>
           <h1>All Movies</h1>
-          <p>Search, filter and sort live TMDB movies or explore our collection.</p>
+          <p>
+            Search, filter and sort live TMDB movies or explore our collection.
+          </p>
           <div className="row g-2 mt-4">
             <div className="col-md-6">
               <input
@@ -67,13 +69,20 @@ export default function Movies() {
                         {item.name}
                       </option>
                     ))
-                  : ['Action', 'Adventure', 'Drama', 'Sci-Fi', 'Fantasy', 'Crime', 'Thriller', 'Sport'].map(
-                      (item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      )
-                    )}
+                  : [
+                      "Action",
+                      "Adventure",
+                      "Drama",
+                      "Sci-Fi",
+                      "Fantasy",
+                      "Crime",
+                      "Thriller",
+                      "Sport",
+                    ].map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
               </select>
             </div>
             <div className="col-md-3">
@@ -89,7 +98,7 @@ export default function Movies() {
             </div>
           </div>
           <div className="text-secondary small mt-3">
-            {loading ? 'Searching...' : `${movieList.length} movies found`}
+            {loading ? "Searching..." : `${movieList.length} movies found`}
           </div>
         </div>
       </section>

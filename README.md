@@ -1,4 +1,4 @@
-# Movie Explorer (FEWT Project) 🎬
+# MovieMint 🍃
 
 A modern, responsive React web application powered by **Vite**, **Bootstrap 5**, **React Router v6**, and **The Movie Database (TMDB) API**.
 
