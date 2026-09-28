@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 export default function Signup() {
   const nav = useNavigate();
-  const { setUser } = useApp();
+  const { login } = useApp();
   const [f, setF] = useState({
     name: "",
     email: "",
@@ -25,8 +25,8 @@ export default function Signup() {
       password: f.password,
     };
     localStorage.setItem("movieExplorerUser", JSON.stringify(u));
-    setUser(u);
-    nav("/login");
+    login(u);
+    nav("/");
   };
   return (
     <Auth title="Create Account" icon="🎬">
